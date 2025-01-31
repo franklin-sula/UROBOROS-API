@@ -6,20 +6,38 @@ const inviteRoutes = require("./routes/invite");
 const publicRoutes = require("./routes/publicRoutes");
 const authMiddleware = require("./middleware/auth");
 
-// CORS configuration
 const corsOptions = {
   origin: [
-    "http://localhost:5173",
-    "https://togatherinv1.vercel.app",
-    process.env.FRONTEND_URL,
+    'http://localhost:5173',
+    'https://togatherinv1.vercel.app',
+    process.env.FRONTEND_URL
   ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Access-Control-Allow-Origin'],
   credentials: true,
   optionsSuccessStatus: 200,
+  preflightContinue: false
 };
 
-app.use(cors());
+// Apply CORS middleware with options
+app.use(cors(corsOptions));
+
+// Add custom CORS headers middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (corsOptions.origin.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
+
 app.use(express.json());
 
 // Routes
