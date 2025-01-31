@@ -3,6 +3,34 @@ const router = express.Router();
 const { acceptInvite } = require("../services/inviteService");
 const validateAcceptInvite = require("../middleware/validateAcceptInvite");
 
+// Validate token
+const isValidToken = (token) => {
+  return typeof token === "string" && /^[a-f0-9]{64}$/i.test(token);
+};
+
+// GET accept-invite
+router.get("/accept-invite", (req, res) => {
+  try {
+    // Get token from query params
+    const { token } = req.query;
+
+    if (!isValidToken(token)) {
+      return res.status(400).json({ error: "Invalid token" });
+    }
+
+    // Get frontend URL from env or use default
+    const frontendUrl = process.env.FRONTEND_URL || "https://localhost:5173";
+    const redirectUrl = `${frontendUrl}/accept-invite?token=${encodeURIComponent(
+      token
+    )}`;
+
+    return res.redirect(redirectUrl);
+  } catch (error) {
+    console.error("Error handling invite redirect:", error);
+    return res.status(500).json({ error: "Failed to process invitation" });
+  }
+});
+
 router.post("/accept-invite", validateAcceptInvite, async (req, res) => {
   try {
     const { token } = req.body;

@@ -11,6 +11,7 @@ app.use(express.json());
 
 // Routes
 app.use("/", publicRoutes);
+app.use("/accept-invite", publicRoutes);
 app.use("/invite", authMiddleware, inviteRoutes);
 
 const PORT = process.env.PORT || 3000;
