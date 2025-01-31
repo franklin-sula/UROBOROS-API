@@ -6,19 +6,23 @@ const inviteRoutes = require("./routes/invite");
 const publicRoutes = require("./routes/publicRoutes");
 const authMiddleware = require("./middleware/auth");
 
-const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'https://togatherinv1.vercel.app',
-    process.env.FRONTEND_URL
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Access-Control-Allow-Origin'],
-  credentials: true,
-  optionsSuccessStatus: 200,
-  preflightContinue: false
-};
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://togatherinv1.vercel.app",
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true); // Allow the origin in the response
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 // Apply CORS middleware with options
 app.use(cors(corsOptions));
@@ -27,12 +31,15 @@ app.use(cors(corsOptions));
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (corsOptions.origin.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  if (req.method === 'OPTIONS') {
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
   next();
