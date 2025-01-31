@@ -9,13 +9,14 @@ const authMiddleware = require("./middleware/auth");
 // CORS configuration
 const corsOptions = {
   origin: [
-    'http://localhost:5173',
-    process.env.FRONTEND_URL
+    "http://localhost:5173",
+    "https://togatherinv1.vercel.app",
+    process.env.FRONTEND_URL,
   ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors());
