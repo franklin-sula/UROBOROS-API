@@ -6,6 +6,18 @@ const inviteRoutes = require("./routes/invite");
 const publicRoutes = require("./routes/publicRoutes");
 const authMiddleware = require("./middleware/auth");
 
+// CORS configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    process.env.FRONTEND_URL
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
 app.use(cors());
 app.use(express.json());
 
