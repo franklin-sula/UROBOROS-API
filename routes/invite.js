@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createInvite, acceptInvite } = require("../services/inviteService");
+const { createInvite } = require("../services/inviteService");
 const rateLimit = require("express-rate-limit");
 const validateInvite = require("../middleware/validateInvite");
 
