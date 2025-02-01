@@ -35,7 +35,7 @@ const getUserEmail = (req) => {
 
 router.post("/send-invite", limiter, validateInvite, async (req, res) => {
   try {
-    const originEmail = req.body.email;
+    const originEmail = req.body.email.trim();
     const { inviterName } = req.body;
     const inviterId = getUserId(req);
     const inviterEmail = getUserEmail(req);
