@@ -13,14 +13,12 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Function to send the invitation email
 const sendInviteEmail = async (email, token, inviterName) => {
-  const URL =
-    process.env.FRONTEND_URL ||
-    "https://togatherinv1.vercel.app" ||
-    "https://localhost:5173";
+  const URL = process.env.FRONTEND_URL;
+  // "https://togatherinv1.vercel.app" ||
+  // "https://localhost:5173";
   const invitationLink = `${URL}/accept-invite?token=${token}`;
 
   try {
-    console.log(inviterName);
     const response = await resend.emails.send({
       from: "noreply@portal.a2kgroup.co.uk",
       to: email,
