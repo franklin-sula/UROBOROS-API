@@ -34,13 +34,12 @@ const getUserEmail = (req) => {
 };
 
 router.post("/send-invite", limiter, validateInvite, async (req, res) => {
-  console.log("Request user object:", req.user);
-
   try {
     const originEmail = req.body.email;
     const { inviterName } = req.body;
     const inviterId = getUserId(req);
     const inviterEmail = getUserEmail(req);
+    console.log(originEmail);
 
     // Check if email is the same as inviter
     if (originEmail === inviterEmail) {
