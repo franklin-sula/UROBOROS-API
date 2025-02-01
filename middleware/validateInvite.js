@@ -1,7 +1,7 @@
 const { check, validationResult } = require("express-validator");
 
 const validateInvite = [
-  check("email").isEmail().normalizeEmail(),
+  check("email").isEmail(), 
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
