@@ -19,10 +19,10 @@ const getUserId = (req) => {
 
 const getUserName = (req) => {
   console.log("Getting user name from:", req.user);
-  if (!req.user || !req.user.name) {
-    throw new Error("User name not found");
+  if (!req.body.inviterName) {
+    throw new Error("Name not found");
   }
-  return `${req.user.first_name} ${req.user.last_name}`;
+  return req.body.inviterName;
 };
 
 const getUserEmail = (req) => {
@@ -37,10 +37,9 @@ router.post("/send-invite", limiter, validateInvite, async (req, res) => {
   console.log("Request user object:", req.user);
 
   try {
-    const { email } = req.body;
+    const { email, inviterName } = req.body;
     const inviterId = getUserId(req);
     const inviterEmail = getUserEmail(req);
-    const inviterName = getUserName(req);
 
     // Check if email is the same as inviter
     if (email === inviterEmail) {

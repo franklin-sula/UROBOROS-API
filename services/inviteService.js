@@ -13,23 +13,27 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Function to send the invitation email
 const sendInviteEmail = async (email, token, inviterName) => {
-  const FRONTEND_URL = "https://togatherinv1.vercel.app";
-  const invitationLink = `${FRONTEND_URL}/accept-invite?token=${token}`;
+  const URL =
+    process.env.FRONTEND_URL ||
+    "https://togatherinv1.vercel.app" ||
+    "https://localhost:5173";
+  const invitationLink = `${URL}/accept-invite?token=${token}`;
 
   try {
+    console.log(inviterName);
     const response = await resend.emails.send({
-      from: "noreply@portal.a2kgroup.org.uk",
+      from: "noreply@portal.a2kgroup.co.uk",
       to: email,
-      subject: "You are invited!",
-      html: `<p>You have been invited to join ${inviterName}'s family account. Click the link below to accept the invitation:</p>
+      subject: "Invite",
+      html: `<p>You have been invited to join <strong>${inviterName}</strong>'s family account. Click the link below to accept the invitation:</p>
              <a href="${invitationLink}">${invitationLink}</a>`,
     });
 
     // Check the response to ensure it was successful
     if (response.error === null) {
-      console.log("Email sent successfully, ID:", response.data.id);
+      console.log("Email sent successfully, ID:", response?.data.id);
     } else {
-      console.error("Failed to send email:", response.error);
+      console.error("Failed to send email:", response?.error);
       throw new Error("Failed to send email");
     }
   } catch (error) {
