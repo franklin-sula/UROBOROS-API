@@ -10,6 +10,7 @@ const corsOptions = {
   origin: [
     "https://localhost:5173",
     "https://togatherinv1.vercel.app",
+    "https://portal.saintlaurence.org.uk",
     process.env.FRONTEND_URL,
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
