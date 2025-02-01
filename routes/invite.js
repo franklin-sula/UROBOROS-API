@@ -17,6 +17,14 @@ const getUserId = (req) => {
   return req.user.id;
 };
 
+const getUserName = (req) => {
+  console.log("Getting user name from:", req.user);
+  if (!req.user || !req.user.name) {
+    throw new Error("User name not found");
+  }
+  return `${req.user.first_name} ${req.user.last_name}`;
+};
+
 const getUserEmail = (req) => {
   console.log("Getting user email from:", req.user);
   if (!req.user || !req.user.email) {
@@ -32,13 +40,19 @@ router.post("/send-invite", limiter, validateInvite, async (req, res) => {
     const { email } = req.body;
     const inviterId = getUserId(req);
     const inviterEmail = getUserEmail(req);
+    const inviterName = getUserName(req);
 
     // Check if email is the same as inviter
     if (email === inviterEmail) {
       return res.status(400).json({ error: "Cannot invite yourself" });
     }
 
-    const result = await createInvite(email, inviterId, inviterEmail);
+    const result = await createInvite(
+      email,
+      inviterId,
+      inviterEmail,
+      inviterName
+    );
     res.status(200).json(result);
   } catch (error) {
     console.error("Error in /send-invite route:", error);

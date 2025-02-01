@@ -1,6 +1,7 @@
 const { createClient } = require("@supabase/supabase-js");
 const { Resend } = require("resend");
 const crypto = require("crypto");
+require("dotenv").config();
 
 // Supabase setup
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -11,15 +12,16 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Function to send the invitation email
-const sendInviteEmail = async (email, token) => {
-  const invitationLink = `https://togatherinv1.vercel.app/accept-invite?token=${token}`;
+const sendInviteEmail = async (email, token, inviterName) => {
+  const FRONTEND_URL = "https://togatherinv1.vercel.app";
+  const invitationLink = `${FRONTEND_URL}/accept-invite?token=${token}`;
 
   try {
     const response = await resend.emails.send({
-      from: "noreply@portal.a2kgroup.co.uk", // Replace with your sender email
+      from: "noreply@portal.a2kgroup.org.uk",
       to: email,
       subject: "You are invited!",
-      html: `<p>You have been invited to join a family. Click the link below to accept the invitation:</p>
+      html: `<p>You have been invited to join ${inviterName}'s family account. Click the link below to accept the invitation:</p>
              <a href="${invitationLink}">${invitationLink}</a>`,
     });
 
@@ -37,15 +39,15 @@ const sendInviteEmail = async (email, token) => {
 };
 
 // Function to create invite and send email
-const createInvite = async (email, inviterId, inviterEmail) => {
+const createInvite = async (email, inviterId, inviterEmail, inviterName) => {
   const token = crypto.randomBytes(32).toString("hex");
 
   // Send invite email
-  await sendInviteEmail(email, token);
+  await sendInviteEmail(email, token, inviterName);
 
   // Save the invite details in the invites table
   const { data, error } = await supabase
-    .from("invites")
+    .from("family_invitations")
     .insert([
       { email, token, inviter_id: inviterId, inviter_email: inviterEmail },
     ]);
@@ -61,7 +63,7 @@ const createInvite = async (email, inviterId, inviterEmail) => {
 const acceptInvite = async (token) => {
   //Find the invite by token
   const { data: invite, error: inviteError } = await supabase
-    .from("invites")
+    .from("family_invitations")
     .select("*")
     .eq("token", token)
     .single();
@@ -108,7 +110,7 @@ const acceptInvite = async (token) => {
   }
   // Mark the invite as accepted
   const { error: acceptError } = await supabase
-    .from("invites")
+    .from("family_invitations")
     .update({ accepted: true })
     .eq("id", invite.id);
 

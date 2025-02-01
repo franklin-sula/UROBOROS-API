@@ -10,7 +10,7 @@ const corsOptions = {
   origin: [
     'http://localhost:5173',
     'https://togatherinv1.vercel.app',
-    process.env.FRONTEND_URL
+    // process.env.FRONTEND_URL
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
