@@ -37,17 +37,18 @@ router.post("/send-invite", limiter, validateInvite, async (req, res) => {
   console.log("Request user object:", req.user);
 
   try {
-    const { email, inviterName } = req.body;
+    const originEmail = req.body.email;
+    const { inviterName } = req.body;
     const inviterId = getUserId(req);
     const inviterEmail = getUserEmail(req);
 
     // Check if email is the same as inviter
-    if (email === inviterEmail) {
+    if (originEmail === inviterEmail) {
       return res.status(400).json({ error: "Cannot invite yourself" });
     }
 
     const result = await createInvite(
-      email,
+      originEmail,
       inviterId,
       inviterEmail,
       inviterName

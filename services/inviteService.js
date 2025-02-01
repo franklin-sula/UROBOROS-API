@@ -44,6 +44,8 @@ const sendInviteEmail = async (email, token, inviterName) => {
 const createInvite = async (email, inviterId, inviterEmail, inviterName) => {
   const token = crypto.randomBytes(32).toString("hex");
 
+  const originEmail = email;
+
   // Send invite email
   await sendInviteEmail(email, token, inviterName);
 
@@ -51,7 +53,7 @@ const createInvite = async (email, inviterId, inviterEmail, inviterName) => {
   const { data, error } = await supabase
     .from("family_invitations")
     .insert([
-      { email, token, inviter_id: inviterId, inviter_email: inviterEmail },
+      { email: originEmail, token, inviter_id: inviterId, inviter_email: inviterEmail },
     ]);
 
   if (error) {
@@ -83,7 +85,7 @@ const acceptInvite = async (token) => {
   const { data: inviter, error: inviterError } = await supabase
     .from("parents")
     .select("family_id")
-    .eq("parishioner_id", invite.inviter_id)
+    .eq("parishioner_id", invite?.inviter_id)
     .single();
 
   if (inviterError || !inviter) {
@@ -94,7 +96,7 @@ const acceptInvite = async (token) => {
   const { data: userEmail, error } = await supabase
     .from("users")
     .select("id")
-    .eq("email", invite.email)
+    .eq("email", invite?.email)
     .single();
 
   if (error) {
