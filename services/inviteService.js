@@ -50,11 +50,14 @@ const createInvite = async (email, inviterId, inviterEmail, inviterName) => {
   await sendInviteEmail(email, token, inviterName);
 
   // Save the invite details in the invites table
-  const { data, error } = await supabase
-    .from("family_invitations")
-    .insert([
-      { email: originEmail, token, inviter_id: inviterId, inviter_email: inviterEmail },
-    ]);
+  const { data, error } = await supabase.from("family_invitations").insert([
+    {
+      email: originEmail,
+      token,
+      inviter_id: inviterId,
+      inviter_email: inviterEmail,
+    },
+  ]);
 
   if (error) {
     console.error("Error inserting invite into Supabase:", error);
@@ -121,7 +124,15 @@ const acceptInvite = async (token) => {
   if (acceptError) {
     throw new Error("Failed to mark invitation as accepted");
   }
+  // Delete the invited user from family_grou
 
+  const { error: deleteError } = await supabase
+    .from("family_group")
+    .delete()
+    .eq("user_id", userEmail.id);
+  if (deleteError) {
+    throw new Error("Failed to delete user from family_group");
+  }
   return { message: "Invitation accepted successfully" };
 };
 
